@@ -499,14 +499,6 @@ body::before {
   from { opacity: 0; transform: translateY(-20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  20%      { transform: translateX(-8px); }
-  40%      { transform: translateX(8px); }
-  60%      { transform: translateX(-5px); }
-  80%      { transform: translateX(5px); }
-}
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -654,9 +646,9 @@ body::before {
   <div class="divider">Ready to submit?</div>
 
   <!-- SUBMIT -->
-  <button class="submit-btn" id="submitBtn" data-href="https://final-link.com">
+  <a class="submit-btn" href="https://final-link.com">
     Submit My Entry ✦
-  </button>
+  </a>
 
   <div class="footer">
     LiteEarn © 2026 · Payouts processed within 24h
@@ -681,44 +673,6 @@ body::before {
       zone.querySelector('.upload-label').style.display = 'none';
     };
     reader.readAsDataURL(file);
-  });
-
-  // Form validation on submit
-  const submitBtn  = document.getElementById('submitBtn');
-  const emailInput = document.querySelector('input[type="email"]');
-  const paySelect  = document.querySelector('select');
-
-  submitBtn.addEventListener('click', function() {
-    const email  = emailInput.value.trim();
-    const method = paySelect.value.trim();
-
-    // Reset styles
-    emailInput.style.borderColor = '';
-    paySelect.style.borderColor  = '';
-
-    let valid = true;
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      emailInput.style.borderColor = '#f05060';
-      emailInput.focus();
-      valid = false;
-    }
-
-    if (!method) {
-      paySelect.style.borderColor = '#f05060';
-      if (valid) paySelect.focus();
-      valid = false;
-    }
-
-    if (!valid) {
-      submitBtn.style.animation = 'none';
-      void submitBtn.offsetWidth; // force reflow
-      submitBtn.style.animation = 'shake 0.4s ease';
-      return;
-    }
-
-    // All good → redirect
-    window.location.href = submitBtn.dataset.href;
   });
 
   // Drag & drop highlight
