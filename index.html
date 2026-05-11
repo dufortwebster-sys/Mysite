@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LiteEarn — Get Rewarded</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #04080f;
+  --surface: #080f1c;
+  --surface2: #0c1628;
+  --border: #152035;
+  --border2: #1e3050;
+  --ltc: #60b4f0;
+  --accent: #b8f050;
+  --accent2: #50f0c8;
+  --text: #ddeeff;
+  --muted: #4a6a8a;
+  --muted2: #7a9ab8;
+  --gold: #f0c840;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cabinet Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── GLOW BLOBS ── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(96,180,240,0.12), transparent 70%);
+  top: -150px; left: -100px;
+  animation: blobMove1 12s ease-in-out infinite alternate;
+}
+.blob-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(184,240,80,0.08), transparent 70%);
+  bottom: 0; right: -100px;
+  animation: blobMove2 15s ease-in-out infinite alternate;
+}
+
+@keyframes blobMove1 { to { transform: translate(60px, 80px); } }
+@keyframes blobMove2 { to { transform: translate(-50px, -60px); } }
+
+/* ── WRAPPER ── */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  padding: 64px 20px 48px;
+  animation: fadeDown 0.7s ease both;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(184,240,80,0.1);
+  border: 1px solid rgba(184,240,80,0.25);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+
+.badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.header h1 {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: clamp(28px, 7vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.header h1 .highlight {
+  color: var(--accent);
+  position: relative;
+}
+
+.header p {
+  color: var(--muted2);
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ── REWARD STRIP ── */
+.reward-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(96,180,240,0.08), rgba(184,240,80,0.06));
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin: 0 0 28px;
+  animation: fadeUp 0.7s 0.15s ease both;
+}
+
+.reward-icon {
+  font-size: 28px;
+}
+
+.reward-text strong {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+}
+
+.reward-text span {
+  font-size: 13px;
+  color: var(--muted2);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.7s ease both;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(96,180,240,0.3), transparent);
+}
+
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.3s; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  width: 42px; height: 42px;
+  background: rgba(96,180,240,0.1);
+  border: 1px solid rgba(96,180,240,0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ── STEPS ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.step:hover {
+  border-color: var(--border2);
+  background: #0f1e35;
+}
+
+.step-num {
+  width: 26px; height: 26px;
+  background: rgba(184,240,80,0.12);
+  border: 1px solid rgba(184,240,80,0.25);
+  color: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-text {
+  font-size: 14px;
+  color: var(--muted2);
+  line-height: 1.5;
+}
+
+.step-text strong {
+  color: var(--text);
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+/* ── LINK BUTTONS ── */
+.link-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0 0;
+}
+
+.link-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: rgba(96,180,240,0.07);
+  border: 1px solid rgba(96,180,240,0.2);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--ltc);
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.link-btn::after {
+  content: '→';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  opacity: 0;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.link-btn:hover {
+  background: rgba(96,180,240,0.14);
+  border-color: rgba(96,180,240,0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(96,180,240,0.12);
+}
+
+.link-btn:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.link-badge {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ── FORM FIELDS ── */
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(96,180,240,0.5);
+  box-shadow: 0 0 0 3px rgba(96,180,240,0.08);
+}
+
+.field input::placeholder { color: var(--muted); }
+
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap::after {
+  content: '⌄';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  font-size: 18px;
+}
+
+/* ── UPLOAD ── */
+.upload-zone {
+  border: 2px dashed var(--border2);
+  border-radius: 14px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  background: var(--surface2);
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: rgba(80,240,200,0.4);
+  background: rgba(80,240,200,0.04);
+}
+
+.upload-zone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-icon { font-size: 36px; margin-bottom: 10px; }
+
+.upload-label {
+  color: var(--muted2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.upload-label strong {
+  color: var(--accent2);
+}
+
+.preview-img {
+  display: none;
+  width: 100%;
+  margin-top: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border2);
+  object-fit: cover;
+  max-height: 220px;
+}
+
+/* ── SUBMIT BUTTON ── */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  background: var(--accent);
+  border: none;
+  border-radius: 14px;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #060a10;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: all 0.2s;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.7s 0.4s ease both;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.5s;
+}
+
+.submit-btn:hover::before { left: 100%; }
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(184,240,80,0.3);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 4px 0;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding-top: 20px;
+  font-family: 'DM Mono', monospace;
+}
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="header">
+  <div class="badge">Live Offer</div>
+  <h1>Earn <span class="highlight">$0.40 LTC</span><br/>in minutes</h1>
+  <p>Complete simple tasks on partner sites<br/>and get rewarded in crypto.</p>
+</div>
+
+<div class="wrapper">
+
+  <!-- REWARD STRIP -->
+  <div class="reward-strip">
+    <div class="reward-icon">⚡</div>
+    <div class="reward-text">
+      <strong>0.40 USD in LTC</strong>
+      <span>per completed registration</span>
+    </div>
+  </div>
+
+  <!-- TASKS CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📌</div>
+      <div>
+        <div class="card-title">How to Earn</div>
+        <div class="card-sub">Follow these 4 steps carefully</div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <strong>Visit a partner site</strong>
+          Click one of the links below to open the offer page.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <strong>Create an account</strong>
+          Register with a valid email address.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <strong>Verify your email</strong>
+          Click the confirmation link sent to your inbox.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-text">
+          <strong>Submit your proof</strong>
+          Upload a screenshot and fill in the form below.
+        </div>
+      </div>
+    </div>
+
+    <div class="link-group">
+      <a class="link-btn" href="https://link1.com" target="_blank">
+        Partner Site 1
+        <span class="link-badge">offer active</span>
+      </a>
+      <a class="link-btn" href="https://link2.com" target="_blank">
+        Partner Site 2
+        <span class="link-badge">offer active</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- PAYMENT CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">💳</div>
+      <div>
+        <div class="card-title">Payment Details</div>
+        <div class="card-sub">Where should we send your reward?</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Payment Method</label>
+      <div class="select-wrap">
+        <select>
+          <option>Litecoin (LTC)</option>
+          <option>Bitcoin (BTC)</option>
+          <option>TRON (TRX)</option>
+          <option>PayPal</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your Email Address</label>
+      <input type="email" placeholder="you@example.com"/>
+    </div>
+
+    <div class="field">
+      <label>LTC Wallet Address</label>
+      <input type="text" placeholder="L..."/>
+    </div>
+  </div>
+
+  <!-- UPLOAD CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🖼</div>
+      <div>
+        <div class="card-title">Upload Screenshot Proof</div>
+        <div class="card-sub">Show your completed registration</div>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*"/>
+      <div class="upload-icon">📎</div>
+      <div class="upload-label">
+        <strong>Click to upload</strong> or drag &amp; drop<br/>
+        PNG, JPG or WEBP · Max 5MB
+      </div>
+      <img class="preview-img" id="preview" alt="Preview"/>
+    </div>
+  </div>
+
+  <div class="divider">Ready to submit?</div>
+
+  <!-- SUBMIT -->
+  <a class="submit-btn" href="https://final-link.com">
+    Submit My Entry ✦
+  </a>
+
+  <div class="footer">
+    LiteEarn © 2026 · Payouts processed within 24h
+  </div>
+
+</div>
+
+<script>
+  // Preview uploaded image
+  const fileInput = document.getElementById('fileInput');
+  const preview   = document.getElementById('preview');
+  const zone      = document.getElementById('uploadZone');
+
+  fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      zone.querySelector('.upload-icon').style.display = 'none';
+      zone.querySelector('.upload-label').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Drag & drop highlight
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event('change'));
+    }
+  });
+</script>
+</body>
+</html>
+
